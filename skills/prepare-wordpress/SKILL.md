@@ -1,4 +1,3 @@
-```skill
 ---
 name: prepare-wordpress
 description: "Use to scaffold or update a WordPress project with dev tooling, agent skills, linting (WPCS), testing (PHPUnit/Pest/Vitest), git hooks (Husky), config files (.editorconfig, .gitignore), and i18n support. Works for both new and existing projects."
@@ -174,5 +173,3 @@ Remind the user to:
 ## Escalation
 
 If a specific tool or dependency fails, install it manually and re-run the detection script to continue from where you left off.
-
-```
