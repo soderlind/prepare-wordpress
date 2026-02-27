@@ -50,9 +50,10 @@ Add testing, linting, and i18n to this WordPress plugin
 
 Replace the placeholders in the generated files:
 
-1. **`package.json`** — Replace `PLUGIN-SLUG` in the i18n scripts with your actual text domain
-2. **`i18n-map.json`** — Replace `BLOCK-NAME` with your actual block directory names
-3. Run `composer install` and `npm install`
+1. **`i18n-map.json`** — Replace `BLOCK-NAME` with your actual block directory names
+2. Run `composer install` and `npm install`
+
+The i18n scripts automatically use the current folder name as the text domain.
 
 ## Prerequisites
 

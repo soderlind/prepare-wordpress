@@ -16,14 +16,16 @@ The user must replace `BLOCK-NAME` with actual block directory names. Add one en
 
 ## npm scripts
 
-Merge into `package.json` scripts. Use `PLUGIN-SLUG` as placeholder for the text domain and .pot filename.
+Merge into `package.json` scripts. Use the **current folder name** (basename of the repo root) as the text domain and .pot filename.
+
+For example, if the project is in `~/Projects/my-plugin`, the slug is `my-plugin`:
 
 ```json
 {
   "scripts": {
     "i18n": "npm run i18n:make-pot && npm run i18n:update-po && npm run i18n:make-mo && npm run i18n:make-json && npm run i18n:make-php",
-    "i18n:make-pot": "wp i18n make-pot . languages/PLUGIN-SLUG.pot --exclude=node_modules,vendor,tests,build --domain=PLUGIN-SLUG",
-    "i18n:update-po": "wp i18n update-po languages/PLUGIN-SLUG.pot languages/",
+    "i18n:make-pot": "wp i18n make-pot . languages/my-plugin.pot --exclude=node_modules,vendor,tests,build --domain=my-plugin",
+    "i18n:update-po": "wp i18n update-po languages/my-plugin.pot languages/",
     "i18n:make-mo": "wp i18n make-mo languages/",
     "i18n:make-json": "wp i18n make-json languages/ --no-purge --use-map=i18n-map.json",
     "i18n:make-php": "wp i18n make-php languages/"
@@ -52,6 +54,5 @@ Or if WP-CLI ships with it bundled (v2.5+), it is already available.
 ## After scaffolding
 
 The user must:
-1. Replace `PLUGIN-SLUG` with the actual plugin text domain (e.g., `my-plugin`).
-2. Replace `BLOCK-NAME` entries in `i18n-map.json` with real block directory names.
-3. Ensure block source files use `__()`, `_e()`, `_n()`, etc. from `@wordpress/i18n`.
+1. Replace `BLOCK-NAME` entries in `i18n-map.json` with real block directory names.
+2. Ensure block source files use `__()`, `_e()`, `_n()`, etc. from `@wordpress/i18n`.

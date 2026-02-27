@@ -140,7 +140,7 @@ See: `references/vitest-setup.md`
 
 Create `i18n-map.json` with placeholder block paths.
 
-Merge i18n npm scripts into `package.json` using `PLUGIN-SLUG` as a placeholder for the text domain.
+Merge i18n npm scripts into `package.json`, using the **current folder name** (basename of the repo root) as the text domain and .pot filename. For example, if the project is in `~/Projects/my-plugin`, use `my-plugin` as the slug.
 
 Create `languages/` directory.
 
@@ -151,7 +151,6 @@ See: `references/i18n-setup.md`
 Print a status table showing each phase as ✅ installed, ⏭ skipped, or 🔀 merged.
 
 Remind the user to:
-- Replace `PLUGIN-SLUG` in `package.json` i18n scripts with the actual text domain.
 - Replace `BLOCK-NAME` in `i18n-map.json` with actual block directory names.
 - Run `composer install` and `npm install`.
 
