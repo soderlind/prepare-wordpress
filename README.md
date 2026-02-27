@@ -1,5 +1,7 @@
 # prepare-wordpress
 
+> Feel free to fork and customize this skill for your specific needs. The provided code is a starting point for me when I need to quickly set up a WordPress project with best practices. It can be extended to include additional tools, configurations, or support for specific frameworks (like React, Vue, etc.) as needed.
+
 An agent skill that scaffolds (or updates) a WordPress project with dev tooling, coding standards, testing, git hooks, and i18n support.
 
 Works with [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview), [VS Code Copilot](https://code.visualstudio.com/docs/copilot/overview), and other agents that support the [skills](https://github.com/vercel-labs/skills) format.
