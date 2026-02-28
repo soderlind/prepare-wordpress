@@ -96,6 +96,7 @@ const pluginSlug = path.basename(repoRoot);
 const state = {
     pluginSlug,
     pluginFile, // null if no plugin file found, filename if found
+    readmeTxt: exists("readme.txt"),
     git: exists(".git"),
     packageJson: exists("package.json"),
     composerJson: exists("composer.json"),
@@ -163,6 +164,9 @@ lines.push("");
 
 if (state.pluginFile) lines.push(`⏭  Plugin file found: ${state.pluginFile}`);
 else lines.push(`📦 No plugin file — will create ${state.pluginSlug}.php`);
+
+if (state.readmeTxt) lines.push(`⏭  readme.txt exists`);
+else lines.push(`📦 No readme.txt — will ask if you want one`);
 
 if (!state.git) lines.push("⚠  No git repo — will run git init");
 if (!state.packageJson) lines.push("⚠  No package.json — will run npm init -y");

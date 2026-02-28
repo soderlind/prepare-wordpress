@@ -61,7 +61,7 @@ The i18n scripts automatically use the current folder name as the text domain.
 
 - Node.js 18+
 - Composer 2+
-- PHP 8.0+
+- PHP 8.3+
 - git
 - [WP-CLI](https://wp-cli.org/) (for i18n commands)
 

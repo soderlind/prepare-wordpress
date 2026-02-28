@@ -1,7 +1,7 @@
 ---
 name: prepare-wordpress
 description: "Use to scaffold or update a WordPress project with dev tooling, agent skills, linting (WPCS), testing (PHPUnit/Pest/Vitest), git hooks (Husky), config files (.editorconfig, .gitignore), and i18n support. Works for both new and existing projects."
-compatibility: "macOS/Linux with Node.js 18+, Composer 2+, PHP 8.0+, git. Optional: WP-CLI for i18n commands."
+compatibility: "macOS/Linux with Node.js 18+, Composer 2+, PHP 8.3+, git. Optional: WP-CLI for i18n commands."
 ---
 
 # Prepare WordPress Project
@@ -45,10 +45,14 @@ Ask the user for the following (show defaults in parentheses):
 - **Author URI**: Author URL (default: empty)
 - **License**: License identifier (default: `GPL-2.0-or-later`)
 - **Text Domain**: (default: folder name / plugin slug)
-- **Requires at least**: Minimum WordPress version (default: `6.7`)
-- **Requires PHP**: Minimum PHP version (default: `8.0`)
+- **Requires at least**: Minimum WordPress version (default: `6.8`)
+- **Tested up to**: Highest WordPress version tested (default: `7.0`)
+- **Requires PHP**: Minimum PHP version (default: `8.3`)
 
-Store these values — they are used in Phase 1b (`plugin.php`), Phase 3 (`composer.json`), and Phase 7 (i18n scripts).
+Store these values — they are used in Phase 1b (`plugin.php`), Phase 1b-2 (`readme.txt`), Phase 3 (`composer.json`), and Phase 7 (i18n scripts).
+
+Also ask:
+- **Create readme.txt?**: Whether to create a WordPress.org-style `readme.txt` (default: yes)
 
 ### 1b) Create plugin.php
 
@@ -70,6 +74,7 @@ Create `<plugin-slug>.php` (using the folder name) with the standard WordPress p
  * Text Domain: {Text Domain}
  * Domain Path: /languages
  * Requires at least: {Requires at least}
+ * Tested up to:      {Tested up to}
  * Requires PHP: {Requires PHP}
  */
 
@@ -79,6 +84,42 @@ defined( 'ABSPATH' ) || exit;
 ```
 
 See: `references/plugin-bootstrap.md`
+
+### 1b-2) Create readme.txt
+
+**Skip if the user answered no, or if `readme.txt` already exists.**
+
+Create `readme.txt` using the plugin metadata collected in Phase 1:
+
+```
+=== {Plugin Name} ===
+Contributors: {author-slug}
+Tags:
+Requires at least: {Requires at least}
+Tested up to: {Tested up to}
+Requires PHP: {Requires PHP}
+Stable tag: 0.1.0
+License: {License}
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+{Description}
+
+== Description ==
+
+{Description}
+
+== Installation ==
+
+1. Upload the plugin files to `/wp-content/plugins/{plugin-slug}/`, or install through the WordPress plugins screen.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+
+== Changelog ==
+
+= 0.1.0 =
+* Initial release.
+```
+
+See: `references/readme-txt.md`
 
 ### 1c) Initialize package files (if needed)
 

@@ -18,6 +18,7 @@ Every WordPress plugin needs a main PHP file with a standard header comment. The
  * Text Domain: {Text Domain}
  * Domain Path: /languages
  * Requires at least: {Requires at least}
+ * Tested up to:      {Tested up to}
  * Requires PHP: {Requires PHP}
  */
 
