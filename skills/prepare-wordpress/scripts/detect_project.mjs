@@ -75,9 +75,27 @@ function skillExists(name) {
     });
 }
 
+function findPluginFile() {
+    // Scan root for a PHP file with a "Plugin Name:" header
+    try {
+        const entries = fs.readdirSync(repoRoot, { withFileTypes: true });
+        for (const entry of entries) {
+            if (!entry.isFile() || !entry.name.endsWith(".php")) continue;
+            const content = fs.readFileSync(path.join(repoRoot, entry.name), "utf8").slice(0, 8192);
+            if (/Plugin\s+Name\s*:/i.test(content)) return entry.name;
+        }
+    } catch {}
+    return null;
+}
+
 // --- Detection ---
 
+const pluginFile = findPluginFile();
+const pluginSlug = path.basename(repoRoot);
+
 const state = {
+    pluginSlug,
+    pluginFile, // null if no plugin file found, filename if found
     git: exists(".git"),
     packageJson: exists("package.json"),
     composerJson: exists("composer.json"),
@@ -140,7 +158,11 @@ const lines = [];
 lines.push("");
 lines.push("=== Project Detection Summary ===");
 lines.push(`Root: ${repoRoot}`);
+lines.push(`Plugin slug: ${state.pluginSlug}`);
 lines.push("");
+
+if (state.pluginFile) lines.push(`⏭  Plugin file found: ${state.pluginFile}`);
+else lines.push(`📦 No plugin file — will create ${state.pluginSlug}.php`);
 
 if (!state.git) lines.push("⚠  No git repo — will run git init");
 if (!state.packageJson) lines.push("⚠  No package.json — will run npm init -y");

@@ -19,6 +19,7 @@ Use this skill when:
 
 - Repo root (current working directory).
 - Whether this is a new or existing project (auto-detected).
+- Plugin metadata (prompted during execution).
 
 ## Procedure
 
@@ -32,16 +33,63 @@ node skills/prepare-wordpress/scripts/detect_project.mjs
 
 This outputs JSON with booleans for each component. Use it to skip phases that are already configured. Report to the user what will be added and what will be skipped.
 
-### 1) Initialize base files (if needed)
+### 1) Gather plugin metadata
+
+Derive the **plugin slug** from the current folder name (e.g. `~/Projects/my-plugin` → `my-plugin`). Use this as the default for the text domain.
+
+Ask the user for the following (show defaults in parentheses):
+- **Plugin Name**: Human-readable name (default: slug with hyphens replaced by spaces and title-cased, e.g. `My Plugin`)
+- **Plugin URI**: URL for the plugin (default: empty)
+- **Description**: Short description (default: empty)
+- **Author**: Author name (default: empty)
+- **Author URI**: Author URL (default: empty)
+- **License**: License identifier (default: `GPL-2.0-or-later`)
+- **Text Domain**: (default: folder name / plugin slug)
+- **Requires at least**: Minimum WordPress version (default: `6.7`)
+- **Requires PHP**: Minimum PHP version (default: `8.0`)
+
+Store these values — they are used in Phase 1b (`plugin.php`), Phase 3 (`composer.json`), and Phase 7 (i18n scripts).
+
+### 1b) Create plugin.php
+
+**Skip if a PHP file with a `Plugin Name:` header already exists in the project root.**
+
+Create `<plugin-slug>.php` (using the folder name) with the standard WordPress plugin header:
+
+```php
+<?php
+/**
+ * Plugin Name: {Plugin Name}
+ * Plugin URI:  {Plugin URI}
+ * Description: {Description}
+ * Version:     0.1.0
+ * Author:      {Author}
+ * Author URI:  {Author URI}
+ * License:     {License}
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: {Text Domain}
+ * Domain Path: /languages
+ * Requires at least: {Requires at least}
+ * Requires PHP: {Requires PHP}
+ */
+
+declare(strict_types=1);
+
+defined( 'ABSPATH' ) || exit;
+```
+
+See: `references/plugin-bootstrap.md`
+
+### 1c) Initialize package files (if needed)
 
 If `package.json` does not exist:
 ```sh
 npm init -y
 ```
 
-If `composer.json` does not exist:
+If `composer.json` does not exist, create it using the plugin metadata:
 ```sh
-composer init --no-interaction --name=wordpress-project/plugin --description="WordPress plugin" --license=GPL-2.0-or-later
+composer init --no-interaction --name=<author>/<plugin-slug> --description="{Description}" --license={License}
 ```
 
 If `.git/` does not exist:
@@ -138,11 +186,16 @@ See: `references/vitest-setup.md`
 
 **Skip if `i18n-map.json` already exists.**
 
-Create `i18n-map.json` with placeholder block paths.
+Use the **text domain** collected in Phase 1.
 
-Merge i18n npm scripts into `package.json`, using the **current folder name** (basename of the repo root) as the text domain and .pot filename. For example, if the project is in `~/Projects/my-plugin`, use `my-plugin` as the slug.
+Ask the user:
+- **Block paths**: List any block directories that contain translatable JS strings (e.g. `blocks/my-block`). If none yet, leave empty and update `i18n-map.json` later.
 
-Create `languages/` directory.
+Then:
+
+1. Create `i18n-map.json` with the provided block paths. For each block path, map `blocks/<name>/save.js` → `build/blocks/<name>/index.js`. If no block paths given, create an empty `{}` placeholder.
+2. Merge i18n npm scripts into `package.json`, using the provided text domain for the `.pot` filename and `--domain` flag.
+3. Create `languages/` directory.
 
 See: `references/i18n-setup.md`
 
@@ -151,7 +204,6 @@ See: `references/i18n-setup.md`
 Print a status table showing each phase as ✅ installed, ⏭ skipped, or 🔀 merged.
 
 Remind the user to:
-- Replace `BLOCK-NAME` in `i18n-map.json` with actual block directory names.
 - Run `composer install` and `npm install`.
 
 ## Verification
