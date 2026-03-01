@@ -53,6 +53,7 @@ Store these values — they are used in Phase 1b (`plugin.php`), Phase 1b-2 (`re
 
 Also ask:
 - **Create readme.txt?**: Whether to create a WordPress.org-style `readme.txt` (default: yes)
+- **Git remote URL**: URL for the remote repository (e.g. `https://github.com/user/my-plugin` or `git@github.com:user/my-plugin.git`). Leave empty to skip.
 
 ### 1b) Create plugin.php
 
@@ -137,6 +138,13 @@ If `.git/` does not exist:
 ```sh
 git init
 ```
+
+If the user provided a **Git remote URL**, add it as the `origin` remote:
+```sh
+git remote add origin <remote-url>
+```
+
+If `.git/` already exists and has no `origin` remote but the user provided a URL, add it. If `origin` already exists, skip.
 
 ### 2) Install agent skills
 
@@ -240,7 +248,17 @@ Then:
 
 See: `references/i18n-setup.md`
 
-### 8) Final summary
+### 8) Cleanup
+
+Remove any stray `yarn.lock` file that may have been created by `npx` commands:
+
+```sh
+rm -f yarn.lock
+```
+
+Only remove it if it did not exist before the skill ran (check the detection output).
+
+### 9) Final summary
 
 Print a status table showing each phase as ✅ installed, ⏭ skipped, or 🔀 merged.
 

@@ -93,11 +93,24 @@ function findPluginFile() {
 const pluginFile = findPluginFile();
 const pluginSlug = path.basename(repoRoot);
 
+function getGitRemoteOrigin() {
+    if (!exists(".git")) return null;
+    try {
+        const config = fs.readFileSync(path.join(repoRoot, ".git", "config"), "utf8");
+        const match = config.match(/\[remote "origin"\][^[]*url\s*=\s*(.+)/);
+        return match ? match[1].trim() : null;
+    } catch {
+        return null;
+    }
+}
+
 const state = {
     pluginSlug,
     pluginFile, // null if no plugin file found, filename if found
     readmeTxt: exists("readme.txt"),
+    yarnLock: exists("yarn.lock"),
     git: exists(".git"),
+    gitRemoteOrigin: getGitRemoteOrigin(),
     packageJson: exists("package.json"),
     composerJson: exists("composer.json"),
 
@@ -169,6 +182,8 @@ if (state.readmeTxt) lines.push(`⏭  readme.txt exists`);
 else lines.push(`📦 No readme.txt — will ask if you want one`);
 
 if (!state.git) lines.push("⚠  No git repo — will run git init");
+if (state.git && state.gitRemoteOrigin) lines.push(`⏭  Git remote origin: ${state.gitRemoteOrigin}`);
+else if (state.git && !state.gitRemoteOrigin) lines.push("📦 No git remote origin — will ask for URL");
 if (!state.packageJson) lines.push("⚠  No package.json — will run npm init -y");
 if (!state.composerJson) lines.push("⚠  No composer.json — will run composer init");
 

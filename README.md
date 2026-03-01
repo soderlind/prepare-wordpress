@@ -16,21 +16,25 @@ npx skills add https://github.com/soderlind/prepare-wordpress --skill prepare-wo
 
 ## What it does
 
-When triggered, the skill runs a detection script to check your project's current state, then only adds what's missing:
+When triggered, the skill prompts for plugin metadata, runs a detection script to check your project's current state, then only adds what's missing:
 
 | Phase | What it sets up |
 |-------|----------------|
-| **Init** | `git init`, `npm init -y`, `composer init` (if missing) |
+| **Metadata** | Prompts for plugin name, description, author, license, WP/PHP versions, git remote URL |
+| **Plugin file** | Creates `<slug>.php` with a standard WordPress plugin header |
+| **readme.txt** | Creates a WordPress.org-style `readme.txt` (optional) |
+| **Init** | `git init`, `git remote add origin`, `npm init -y`, `composer init` (if missing) |
 | **Agent skills** | Installs 6 WordPress dev skills from [automattic/agent-skills](https://github.com/automattic/agent-skills) and [jeffallan/claude-skills](https://github.com/jeffallan/claude-skills) |
 | **Composer** | PHPUnit, Pest, WPCS, PHPCS installer + `test` and `lint` scripts |
 | **Husky** | Git hooks with a `pre-push` hook running `composer install --no-dev --optimize-autoloader` |
 | **Config files** | `.editorconfig` (4-space, UTF-8, LF) and `.gitignore` (vendor, node_modules, .env) |
 | **Vitest** | `vitest` + `jsdom`, config file, test setup, and `test:js` npm script |
 | **i18n** | `i18n-map.json` template, `languages/` directory, and WP-CLI i18n npm scripts |
+| **Cleanup** | Removes stray `yarn.lock` created by `npx` commands |
 
 ### Smart detection
 
-The skill's detection script checks for existing files and configs before each phase. If something already exists, it's skipped (or merged in the case of `.gitignore`).
+The skill's detection script checks for existing files and configs before each phase. If something already exists, it's skipped (or merged in the case of `.gitignore`). Existing plugin files, `readme.txt`, git remote origin, and installed agent skills are all detected automatically.
 
 ## Usage
 
@@ -50,12 +54,10 @@ Add testing, linting, and i18n to this WordPress plugin
 
 ## After scaffolding
 
-Replace the placeholders in the generated files:
-
-1. **`i18n-map.json`** — Replace `BLOCK-NAME` with your actual block directory names
+1. **`i18n-map.json`** — Replace `BLOCK-NAME` with your actual block directory names (if you have blocks)
 2. Run `composer install` and `npm install`
 
-The i18n scripts automatically use the current folder name as the text domain.
+The text domain and plugin slug are derived from the current folder name automatically.
 
 ## Prerequisites
 
@@ -72,7 +74,7 @@ The i18n scripts automatically use the current folder name as the text domain.
 npx skills list -g
 
 # Update to latest version
-npx skills update
+npx skills update prepare-wordpress -g
 
 # Remove
 npx skills remove prepare-wordpress -g
