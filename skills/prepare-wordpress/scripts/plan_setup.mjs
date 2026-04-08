@@ -95,8 +95,8 @@ function buildPlan(state, phases) {
     if (missingComposer) {
         composerCommands.push("composer require --dev phpunit/phpunit wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer pestphp/pest");
     }
-    if (!state.composerScripts.test || !state.composerScripts.lint) {
-        composerNotes.push("Manual: merge composer scripts test/lint into composer.json without overwriting existing scripts.");
+    if (!state.composerScripts.test || !state.composerScripts.lint || !state.composerScripts.check) {
+        composerNotes.push("Manual: merge composer scripts test/lint/check into composer.json without overwriting existing scripts.");
     }
     add("composer", composerCommands.length > 0 || composerNotes.length > 0 ? "Configure Composer tooling" : "Composer phase already satisfied", composerCommands, composerNotes);
 

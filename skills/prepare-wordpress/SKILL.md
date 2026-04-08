@@ -215,16 +215,21 @@ Install all PHP dev dependencies in a single command:
 composer require --dev phpunit/phpunit wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer pestphp/pest
 ```
 
-Then merge these scripts into `composer.json` (do not overwrite existing scripts):
+Then merge these scripts into `composer.json` (do not overwrite existing scripts).
+
+Replace `<plugin-slug>` with the actual plugin slug (folder name / text domain).
 
 ```json
 {
   "scripts": {
     "test": "phpunit",
-    "lint": "phpcs --standard=WordPress --extensions=php ."
+    "lint": "phpcs --standard=WordPress --extensions=php .",
+    "check": "wp plugin check <plugin-slug> --format=text"
   }
 }
 ```
+
+> **Note:** The `check` script requires [Plugin Check (PCP)](https://wordpress.org/plugins/plugin-check/) installed and activated in WordPress, and WP-CLI available. Install with `wp plugin install plugin-check --activate`.
 
 See: `references/composer-setup.md`
 

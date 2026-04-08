@@ -127,6 +127,7 @@ export function detectProjectState(targetRoot = process.cwd()) {
         composerScripts: {
             test: composerHasScript("test"),
             lint: composerHasScript("lint"),
+            check: composerHasScript("check"),
         },
 
         // Config files
