@@ -25,7 +25,7 @@ When triggered, the skill prompts for plugin metadata, runs a detection script t
 | **readme.txt** | Creates a WordPress.org-style `readme.txt` (optional) |
 | **Init** | `git init`, `git remote add origin`, `npm init -y`, `composer init` (if missing) |
 | **Agent skills** | Installs 6 WordPress dev skills from [automattic/agent-skills](https://github.com/automattic/agent-skills) and [jeffallan/claude-skills](https://github.com/jeffallan/claude-skills) |
-| **Composer** | PHPUnit, Pest, WPCS, PHPCS installer + `test` and `lint` scripts |
+| **Composer** | PHPUnit, Pest, WPCS, PHPCS installer + `test`, `lint`, and `check` scripts |
 | **Config files** | `.editorconfig` (4-space, UTF-8, LF) and `.gitignore` (vendor, node_modules, .env) |
 | **Vitest** | `vitest` + `jsdom`, config file, test setup, and `test:js` npm script |
 | **i18n** | `i18n-map.json` template, `languages/` directory, and WP-CLI i18n npm scripts |
