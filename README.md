@@ -2,7 +2,7 @@
 
 > Feel free to fork and customize this skill for your specific needs. The provided code is a starting point for me when I need to quickly set up a WordPress project with best practices. It can be extended to include additional tools, configurations, or support for specific frameworks (like React, Vue, etc.) as needed.
 
-An agent skill that scaffolds (or updates) a WordPress project with dev tooling, coding standards, testing, git hooks, and i18n support.
+An agent skill that scaffolds (or updates) a WordPress project with dev tooling, coding standards, testing, and i18n support.
 
 Works with [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview), [VS Code Copilot](https://code.visualstudio.com/docs/copilot/overview), and other agents that support the [skills](https://github.com/vercel-labs/skills) format.
 
@@ -26,11 +26,50 @@ When triggered, the skill prompts for plugin metadata, runs a detection script t
 | **Init** | `git init`, `git remote add origin`, `npm init -y`, `composer init` (if missing) |
 | **Agent skills** | Installs 6 WordPress dev skills from [automattic/agent-skills](https://github.com/automattic/agent-skills) and [jeffallan/claude-skills](https://github.com/jeffallan/claude-skills) |
 | **Composer** | PHPUnit, Pest, WPCS, PHPCS installer + `test` and `lint` scripts |
-| **Husky** | Git hooks with a `pre-push` hook running `composer install --no-dev --optimize-autoloader` |
 | **Config files** | `.editorconfig` (4-space, UTF-8, LF) and `.gitignore` (vendor, node_modules, .env) |
 | **Vitest** | `vitest` + `jsdom`, config file, test setup, and `test:js` npm script |
 | **i18n** | `i18n-map.json` template, `languages/` directory, and WP-CLI i18n npm scripts |
 | **Cleanup** | Removes stray `yarn.lock` created by `npx` commands |
+
+### Feature flags and dry-run
+
+Use the planner to preview what will run before writing changes:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --dry-run
+```
+
+Limit execution to specific phases:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --dry-run --only=init,composer,config
+```
+
+Skip phases you do not want:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --dry-run --skip=skills,vitest
+```
+
+Apply safe shell commands from the plan:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --apply --only=init,skills,composer
+```
+
+Get machine-readable dry-run plan output for tools/automation:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --json --only=init,composer
+```
+
+Get machine-readable apply output (includes per-phase command results):
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --json --apply --only=cleanup
+```
+
+Available phase flags: `plugin`, `readme`, `init`, `skills`, `composer`, `config`, `vitest`, `i18n`, `cleanup`.
 
 ### Smart detection
 

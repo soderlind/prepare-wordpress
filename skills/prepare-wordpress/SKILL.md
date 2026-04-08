@@ -1,6 +1,6 @@
 ---
 name: prepare-wordpress
-description: "Use to scaffold or update a WordPress project with dev tooling, agent skills, linting (WPCS), testing (PHPUnit/Pest/Vitest), git hooks (Husky), config files (.editorconfig, .gitignore), and i18n support. Works for both new and existing projects."
+description: "Use to scaffold or update a WordPress project with dev tooling, agent skills, linting (WPCS), testing (PHPUnit/Pest/Vitest), config files (.editorconfig, .gitignore), and i18n support. Works for both new and existing projects."
 compatibility: "macOS/Linux with Node.js 18+, Composer 2+, PHP 8.3+, git. Optional: WP-CLI for i18n commands."
 ---
 
@@ -13,7 +13,7 @@ Use this skill when:
 - Starting a new WordPress plugin or theme project from scratch
 - Adding standard dev tooling to an existing WordPress project
 - Ensuring a WordPress project follows coding standards and best practices
-- Setting up testing, linting, git hooks, or i18n scaffolding
+- Setting up testing, linting, or i18n scaffolding
 
 ## Inputs required
 
@@ -33,6 +33,54 @@ node skills/prepare-wordpress/scripts/detect_project.mjs
 
 This outputs JSON with booleans for each component. Use it to skip phases that are already configured. Report to the user what will be added and what will be skipped.
 
+### 0b) Choose feature flags and execution mode
+
+Before changing files, ask which phases to run. Defaults: all phases enabled, dry-run first.
+
+- `plugin` — create plugin bootstrap file
+- `readme` — create `readme.txt`
+- `init` — initialize repo/package/composer basics
+- `skills` — install agent skills
+- `composer` — install PHP dev deps and merge scripts
+- `config` — create/merge `.editorconfig` and `.gitignore`
+- `vitest` — install and scaffold Vitest
+- `i18n` — scaffold i18n files/scripts
+- `cleanup` — remove stray `yarn.lock`
+
+Use the planner script to preview actions:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --dry-run
+```
+
+Feature flags:
+
+```sh
+# Run only selected phases
+node skills/prepare-wordpress/scripts/plan_setup.mjs --dry-run --only=init,composer,config
+
+# Skip selected phases
+node skills/prepare-wordpress/scripts/plan_setup.mjs --dry-run --skip=skills,vitest
+```
+
+Apply safe shell commands from the plan (manual file merges are still called out as notes):
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --apply --only=init,skills,composer
+```
+
+Machine-readable dry-run output for automation:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --json --only=init,composer
+```
+
+Machine-readable apply output with command execution results:
+
+```sh
+node skills/prepare-wordpress/scripts/plan_setup.mjs --json --apply --only=cleanup
+```
+
 ### 1) Gather plugin metadata
 
 Derive the **plugin slug** from the current folder name (e.g. `~/Projects/my-plugin` → `my-plugin`). Use this as the default for the text domain.
@@ -49,7 +97,7 @@ Ask the user for the following (show defaults in parentheses):
 - **Tested up to**: Highest WordPress version tested (default: `7.0`)
 - **Requires PHP**: Minimum PHP version (default: `8.3`)
 
-Store these values — they are used in Phase 1b (`plugin.php`), Phase 1b-2 (`readme.txt`), Phase 3 (`composer.json`), and Phase 7 (i18n scripts).
+Store these values — they are used in Phase 1b (`plugin.php`), Phase 1b-2 (`readme.txt`), Phase 3 (`composer.json`), and Phase 6 (i18n scripts).
 
 Also ask:
 - **Create readme.txt?**: Whether to create a WordPress.org-style `readme.txt` (default: yes)
@@ -180,26 +228,7 @@ Then merge these scripts into `composer.json` (do not overwrite existing scripts
 
 See: `references/composer-setup.md`
 
-### 4) Husky git hooks
-
-**Skip if `.husky/` already exists.**
-
-```sh
-npm install --save-dev husky
-npx husky init
-```
-
-Create `.husky/pre-push` with:
-
-```sh
-composer install --no-dev --optimize-autoloader
-```
-
-If `.husky/` exists but `pre-push` is missing, only create the hook file.
-
-See: `references/husky-setup.md`
-
-### 5) Config files
+### 4) Config files
 
 **`.editorconfig`** — Skip if it already exists. Create with WordPress-standard settings.
 
@@ -209,7 +238,7 @@ See: `references/config-files.md`
 
 See: `references/config-files.md`
 
-### 6) Vitest setup
+### 5) Vitest setup
 
 **Skip if `vitest.config.js` already exists.**
 
@@ -231,7 +260,7 @@ Merge a `test:js` script into `package.json`:
 
 See: `references/vitest-setup.md`
 
-### 7) i18n scaffolding
+### 6) i18n scaffolding
 
 **Skip if `i18n-map.json` already exists.**
 
@@ -248,7 +277,7 @@ Then:
 
 See: `references/i18n-setup.md`
 
-### 8) Cleanup
+### 7) Cleanup
 
 Remove any stray `yarn.lock` file that may have been created by `npx` commands:
 
@@ -269,14 +298,12 @@ Remind the user to:
 
 - All config files exist and are well-formed.
 - `composer validate` passes.
-- `npm ls` shows no missing peer dependencies for vitest/husky.
-- `.husky/pre-push` is executable.
+- `npm ls` shows no missing peer dependencies for vitest.
 - Agent skills are present under `~/.copilot/skills/` or `~/.agents/skills/`.
 
 ## Failure modes / debugging
 
 - `composer require` fails: PHP version too old, or Composer not installed. Check `php -v` and `composer --version`.
-- `npx husky init` fails: not a git repo. Run `git init` first.
 - `npx skills add` fails: Node.js < 18 or network issue. Check `node -v`.
 - Pest install fails with conflict: PHPUnit version mismatch. Let Composer resolve dependency tree.
 
