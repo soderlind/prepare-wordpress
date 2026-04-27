@@ -6,15 +6,26 @@ An agent skill that scaffolds (or updates) a WordPress project with dev tooling,
 
 Works with [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview), [VS Code Copilot](https://code.visualstudio.com/docs/copilot/overview), and other agents that support the [skills](https://github.com/vercel-labs/skills) format.
 
+## Included skills
+
+| Skill | Purpose |
+|-------|---------|
+| `prepare-wordpress` | Scaffold or update a WordPress project with dev tooling, coding standards, testing, and i18n support |
+| `wp-bump` | Bump a WordPress plugin version, update changelogs, rebuild assets, and run tests |
+
 ## Install
 
 ```sh
+# WordPress project setup
 npx skills add https://github.com/soderlind/prepare-wordpress --skill prepare-wordpress -g
+
+# WordPress plugin version bump workflow
+npx skills add https://github.com/soderlind/prepare-wordpress --skill wp-bump -g
 ```
 
 `-g` installs globally (available in all projects). Without it, the skill is installed into the current project only.
 
-## What it does
+## What prepare-wordpress does
 
 When triggered, the skill prompts for plugin metadata, runs a detection script to check your project's current state, then only adds what's missing:
 
@@ -77,7 +88,7 @@ The skill's detection script checks for existing files and configs before each p
 
 ## Usage
 
-After installation, the skill is triggered automatically when you ask your agent to prepare or scaffold a WordPress project. Examples:
+After installation, the skills are triggered automatically when you ask your agent to prepare/scaffold a WordPress project or bump a plugin version. Examples:
 
 ```
 Prepare this project for WordPress plugin development
@@ -89,6 +100,14 @@ Set up dev tooling for this WordPress project
 
 ```
 Add testing, linting, and i18n to this WordPress plugin
+```
+
+```
+Bump this WordPress plugin to 1.2.3 and update the changelog
+```
+
+```
+Run wp-bump for version 1.2.3
 ```
 
 ## After scaffolding
@@ -122,3 +141,11 @@ npx skills remove prepare-wordpress -g
 ## License
 
 GPL-2.0-or-later
+
+## AI contribution attribution
+
+When AI tools contribute to development, include an assisted-by tag in relevant commit messages, pull requests, or release notes:
+
+```txt
+Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]
+```
