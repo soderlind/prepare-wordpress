@@ -19,7 +19,7 @@ Use this skill when:
 
 - Repo root (current working directory).
 - Target version, preferably SemVer (`1.2.3`). If missing, ask the user.
-- Changelog entry for the release. If missing, ask for concise release notes.
+- Changelog entry: auto-derived from `git log` since the last tag; prompt only if no useful commits are found.
 - Release date. Default to today's date.
 
 Do not create commits, tags, or releases unless the user explicitly asks.
@@ -35,6 +35,19 @@ git status --short
 ```
 
 Detect the main plugin file by scanning root-level PHP files for a `Plugin Name:` header. If multiple files match, ask the user which one to update.
+
+#### Gather commits since last release
+
+Find the most recent tag and collect commit subjects since then:
+
+```sh
+git tag --sort=-creatordate | head -1          # latest tag, empty if none
+git log <last-tag>..HEAD --oneline --no-merges # commits since last tag
+```
+
+If there is no tag yet, use `git log --oneline --no-merges` (all commits).
+
+Store these subjects as candidate changelog lines. Filter out noise: commits whose subject starts with `Merge`, `Revert`, `chore:`, `ci:`, `build:`, `style:`, or is identical to the bump commit itself. If any candidate lines remain, use them to draft the changelog entry (see step 3). Only prompt the user for changelog content when no useful commits are found after filtering.
 
 Inspect these files if they exist:
 
@@ -68,6 +81,15 @@ npm version <target-version> --no-git-tag-version
 If there is no npm lockfile, it is acceptable to edit `package.json` directly as structured JSON. Do not create `package.json` only for a version bump.
 
 ### 3) Update changelogs
+
+#### Draft the changelog entry
+
+Use the candidate commit subjects collected in step 0 to draft bullet points:
+
+- Strip conventional-commit prefixes (`fix:`, `feat:`, `docs:`, etc.) and capitalise the first letter.
+- One bullet per subject line.
+- Present the draft to the user for confirmation or editing before writing files.
+- If no candidates were found, prompt the user for concise release notes.
 
 Update both changelog locations.
 
